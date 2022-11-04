@@ -64,7 +64,7 @@ export default function BottomBar({ className, ...rest }: BottomBarProps) {
   return (
     <div
       className={clsxm(
-        'fixed bottom-0 left-0 right-0 mx-auto flex h-16 w-full max-w-md flex-row items-center justify-around bg-white shadow-sm',
+        'fixed bottom-0 left-0 right-0 mx-auto flex h-16 w-full max-w-md flex-row items-center justify-around bg-white shadow-primary',
         className
       )}
       {...rest}
@@ -78,10 +78,10 @@ export default function BottomBar({ className, ...rest }: BottomBarProps) {
             key={item.name}
             href={item.href}
             className={clsxm(
-              'relative flex h-full flex-1 cursor-pointer flex-col items-center justify-center gap-1',
+              'relative flex h-full flex-1 flex-col items-center justify-center gap-1',
               isActive
                 ? 'border-t-2 border-primary-300 text-primary-500'
-                : 'text-gray-500'
+                : 'text-gray-500 hover:text-gray-600'
             )}
           >
             <Icon className='h-6 w-6' />
