@@ -4,18 +4,18 @@ import BottomBar from '@/components/layout/BottomBar';
 
 type LayoutProps = {
   children: React.ReactNode;
-  omitBottomBar?: boolean;
+  withBottomBar?: boolean;
 };
 
 export default function Layout({
   children,
-  omitBottomBar = false,
+  withBottomBar = false,
 }: LayoutProps) {
   // Put Header or Footer Here
   return (
-    <div className='bg-gray-50'>
+    <div className='min-h-screen bg-gray-50'>
       <div className='mx-auto max-w-md bg-white shadow-sm'>{children}</div>
-      {!omitBottomBar && <BottomBar />}
+      {withBottomBar && <BottomBar />}
     </div>
   );
 }

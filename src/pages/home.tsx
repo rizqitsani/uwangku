@@ -37,7 +37,7 @@ export default function HomePage() {
   };
 
   return (
-    <Layout>
+    <Layout withBottomBar>
       <Seo templateTitle='Home' />
 
       <main>
