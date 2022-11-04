@@ -8,7 +8,7 @@ import Seo from '@/components/Seo';
 
 export default function HomePage() {
   return (
-    <Layout>
+    <Layout omitBottomBar>
       <Seo />
 
       <main>
