@@ -50,7 +50,7 @@ const navItems: Navigation[] = [
   },
   {
     name: 'Pengaturan',
-    href: '#',
+    href: '/settings',
     icon: {
       base: HiOutlineCog,
       active: HiCog,
