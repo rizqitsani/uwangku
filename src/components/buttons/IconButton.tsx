@@ -10,9 +10,15 @@ enum ButtonVariant {
   'light',
 }
 
+enum ButtonSize {
+  'small',
+  'base',
+}
+
 type IconButtonProps = {
   icon: IconType;
   iconClassName?: string;
+  size?: keyof typeof ButtonSize;
   variant?: keyof typeof ButtonVariant;
 } & React.ComponentPropsWithRef<'button'>;
 
@@ -21,6 +27,7 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
     {
       className,
       icon: Icon,
+      size = 'base',
       variant = 'outline',
       disabled,
       iconClassName,
@@ -37,7 +44,17 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
           'inline-flex items-center justify-center font-semibold',
           'focus:outline-none focus-visible:ring focus-visible:ring-primary-500',
           'transition-colors duration-75',
-          'min-h-[28px] min-w-[28px] rounded-lg p-1 md:min-h-[34px] md:min-w-[34px] md:p-2',
+          'rounded-lg',
+          //#region  //*=========== Size ===========
+          [
+            size === 'small' && [
+              'min-h-[20px] min-w-[20px] md:min-h-[28px] md:min-w-[28px]',
+            ],
+            size === 'base' && [
+              'min-h-[28px] min-w-[28px] p-1 md:min-h-[34px]  md:min-w-[34px] md:p-2',
+            ],
+          ],
+          //#endregion  //*======== Variants ===========
           //#region  //*=========== Variants ===========
           [
             variant === 'primary' && [
