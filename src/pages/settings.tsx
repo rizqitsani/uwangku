@@ -13,12 +13,8 @@ const settings = [
     href: '/accounts',
   },
   {
-    name: 'Kelola Kategori Pemasukan',
-    href: '#',
-  },
-  {
-    name: 'Kelola Kategori Pengeluaran',
-    href: '#',
+    name: 'Kategori Pemasukan & Pengeluaran',
+    href: '/categories',
   },
 ];
 
