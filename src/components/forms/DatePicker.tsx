@@ -1,7 +1,11 @@
 import clsx from 'clsx';
+import idLocale from 'date-fns/locale/id';
 import ReactDatePicker, { ReactDatePickerProps } from 'react-datepicker';
+import { registerLocale } from 'react-datepicker';
 import { Controller, RegisterOptions, useFormContext } from 'react-hook-form';
 import { HiOutlineCalendar } from 'react-icons/hi';
+
+registerLocale('id', idLocale);
 
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -74,6 +78,7 @@ export default function DatePicker({
                 )}
                 placeholderText={placeholder}
                 aria-describedby={id}
+                locale='id'
                 showMonthDropdown
                 showYearDropdown
                 dropdownMode='select'

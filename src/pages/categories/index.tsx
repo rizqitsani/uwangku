@@ -1,19 +1,12 @@
 import * as React from 'react';
 import { HiArrowLeft, HiPlus } from 'react-icons/hi';
 
+import { expenseCategories, incomeCategories } from '@/lib/mocks/data/category';
+
 import IconButton from '@/components/buttons/IconButton';
 import Layout from '@/components/layout/Layout';
 import IconLink from '@/components/links/IconLink';
 import Seo from '@/components/Seo';
-
-const incomeCategories = ['Gaji', 'Bonus', 'Lainnya'];
-const expenseCategories = [
-  'Makanan',
-  'Transportasi',
-  'Hiburan',
-  'Example of category name that requires more than 1 line',
-  'Lainnya',
-];
 
 type CategoriesCardProps = {
   children: React.ReactNode;
