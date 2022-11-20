@@ -3,31 +3,12 @@ import * as React from 'react';
 import { HiArrowDown, HiArrowUp, HiOutlineLogout } from 'react-icons/hi';
 
 import clsxm from '@/lib/clsxm';
+import { formatRupiah } from '@/lib/currency';
+import { transactions } from '@/lib/mocks/data/transaction';
 
 import IconButton from '@/components/buttons/IconButton';
 import Layout from '@/components/layout/Layout';
 import Seo from '@/components/Seo';
-
-const transactions = [
-  {
-    id: 1,
-    name: 'Bonus Ayah',
-    category: 'Uang Bulanan',
-    amount: 'Rp500,000',
-    type: 'income',
-    date: '10 November 2022',
-    datetime: '2022-11-10',
-  },
-  {
-    id: 2,
-    name: 'Curry On',
-    category: 'Makan',
-    amount: 'Rp30,000',
-    type: 'expense',
-    date: '2 November 2022',
-    datetime: '2022-11-02',
-  },
-];
 
 export default function HomePage() {
   const router = useRouter();
@@ -90,8 +71,8 @@ export default function HomePage() {
               role='list'
               className='mt-2 divide-y divide-gray-200 overflow-hidden'
             >
-              {transactions.map((transaction) => (
-                <li
+              {transactions.slice(0, 2).map((transaction) => (
+                <div
                   key={transaction.id}
                   className='block bg-white px-2 py-3 hover:bg-gray-50'
                 >
@@ -116,7 +97,6 @@ export default function HomePage() {
                         />
                       </span>
                       <span className='flex flex-col truncate'>
-                        {/* <span className='flex flex-col truncate text-sm text-gray-500'> */}
                         <span className='text-sm font-medium'>
                           {transaction.name}
                         </span>
@@ -126,11 +106,11 @@ export default function HomePage() {
                         <span className='text-xs'>{transaction.date}</span>
                       </span>
                     </span>
-                    <span className='font-medium text-gray-900'>
-                      {transaction.amount}
+                    <span className='text-sm font-medium text-gray-900'>
+                      {formatRupiah(transaction.amount)}
                     </span>
                   </span>
-                </li>
+                </div>
               ))}
             </ul>
           </section>

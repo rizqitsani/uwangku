@@ -7,9 +7,10 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 type DatePickerProps = {
   validation?: RegisterOptions;
-  label: string;
+  label: string | null;
   id: string;
   placeholder?: string;
+  dateFormat?: string | string[];
   defaultYear?: number;
   defaultMonth?: number;
   defaultValue?: string;
@@ -22,6 +23,7 @@ export default function DatePicker({
   label,
   id,
   placeholder,
+  dateFormat,
   defaultYear,
   defaultMonth,
   defaultValue,
@@ -39,11 +41,15 @@ export default function DatePicker({
   if (defaultYear) defaultDate.setFullYear(defaultYear);
   if (defaultMonth) defaultDate.setMonth(defaultMonth);
 
+  const withLabel = label !== null;
+
   return (
     <div className='relative'>
-      <label htmlFor={id} className='block text-sm font-normal text-gray-700'>
-        {label}
-      </label>
+      {withLabel && (
+        <label htmlFor={id} className='block text-sm font-normal text-gray-700'>
+          {label}
+        </label>
+      )}
 
       <Controller
         control={control}
@@ -72,7 +78,7 @@ export default function DatePicker({
                 showYearDropdown
                 dropdownMode='select'
                 openToDate={value ? new Date(value) : defaultDate}
-                dateFormat='dd/MM/yyyy'
+                dateFormat={dateFormat || 'dd/MM/yyyy'}
                 readOnly={readOnly}
                 {...rest}
               />
