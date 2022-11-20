@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
+import { HiPlus } from 'react-icons/hi';
 import { IoWallet } from 'react-icons/io5';
 
 import clsxm from '@/lib/clsxm';
@@ -59,7 +60,7 @@ export default function TransactionsPage() {
 
       <main>
         <section className=''>
-          <div className='layout min-h-screen py-6'>
+          <div className='layout min-h-main relative py-6'>
             <div className='flex items-center gap-2'>
               <IconLink
                 variant='ghost'
@@ -134,6 +135,13 @@ export default function TransactionsPage() {
                 </div>
               ))}
             </div>
+            <IconLink
+              variant='primary'
+              className='absolute bottom-4 right-0 min-h-[48px] min-w-[48px] rounded-full'
+              iconClassName='text-2xl md:text-xl'
+              href='/transactions/add'
+              icon={HiPlus}
+            />
           </div>
         </section>
       </main>
