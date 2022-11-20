@@ -34,7 +34,7 @@ const navItems: Navigation[] = [
   },
   {
     name: 'Transaksi',
-    href: '#',
+    href: '/transactions',
     icon: {
       base: IoWalletOutline,
       active: IoWallet,
