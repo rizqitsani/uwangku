@@ -25,6 +25,10 @@
   --color-primary-800: rgb(var(--tw-color-primary-800)); /* #1e40af */
   --color-primary-900: rgb(var(--tw-color-primary-900)); /* #1e3a8a */
   /* #endregion  /**======== Primary Color =========== */
+
+  --rsbs-max-w: 28rem;
+  --rsbs-ml: auto;
+  --rsbs-mr: auto;
 }
 
 @layer base {

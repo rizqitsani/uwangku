@@ -7,6 +7,7 @@ import { AppProps } from 'next/app';
 import { Router } from 'next/router';
 import nProgress from 'nprogress';
 
+import 'react-spring-bottom-sheet/dist/style.css';
 import '@/styles/globals.css';
 import '@/styles/nprogress.css';
 
