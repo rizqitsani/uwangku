@@ -12,6 +12,7 @@ import '@/styles/globals.css';
 import '@/styles/nprogress.css';
 
 import axiosClient from '@/lib/axios';
+import { trpc } from '@/lib/trpc';
 
 import DismissableToast from '@/components/DismissableToast';
 
@@ -41,4 +42,4 @@ function MyApp({ Component, pageProps }: AppProps) {
   );
 }
 
-export default MyApp;
+export default trpc.withTRPC(MyApp);
