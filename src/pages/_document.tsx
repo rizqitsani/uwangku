@@ -23,6 +23,10 @@ class MyDocument extends Document {
             type='font/woff2'
             crossOrigin='anonymous'
           />
+          <meta
+            name='google-site-verification'
+            content='b3TJ_VNwF1v8-Axb0v3rf3jyk5Ef2OU8qWaY-7bcQ3U'
+          />
         </Head>
         <body>
           <Main />
