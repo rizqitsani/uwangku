@@ -5,6 +5,7 @@ import {
 } from '@tanstack/react-query';
 import { AppProps } from 'next/app';
 import { Router } from 'next/router';
+import { SessionProvider } from 'next-auth/react';
 import nProgress from 'nprogress';
 
 import 'react-spring-bottom-sheet/dist/style.css';
@@ -33,11 +34,13 @@ const queryClient = new QueryClient({
   },
 });
 
-function MyApp({ Component, pageProps }: AppProps) {
+function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   return (
     <QueryClientProvider client={queryClient}>
-      <DismissableToast />
-      <Component {...pageProps} />
+      <SessionProvider session={session}>
+        <DismissableToast />
+        <Component {...pageProps} />
+      </SessionProvider>
     </QueryClientProvider>
   );
 }
