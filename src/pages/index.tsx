@@ -1,3 +1,4 @@
+import { signIn } from 'next-auth/react';
 import * as React from 'react';
 import { FcGoogle } from 'react-icons/fc';
 
@@ -21,6 +22,7 @@ export default function HomePage() {
             <Button
               className='mt-24 items-center gap-2 font-normal'
               variant='light'
+              onClick={() => signIn('google')}
             >
               <FcGoogle className='text-[1.15em]' />
               <span className='font-medium'>Continue with Google</span>
