@@ -2,6 +2,9 @@
 
 import { NextApiRequest, NextApiResponse } from 'next';
 
-export default function hello(req: NextApiRequest, res: NextApiResponse) {
-  res.status(200).json({ name: 'Bambang' });
+import { prisma } from '@/server/prisma';
+
+export default async function hello(req: NextApiRequest, res: NextApiResponse) {
+  const users = await prisma.user.findMany();
+  res.status(200).json(users);
 }

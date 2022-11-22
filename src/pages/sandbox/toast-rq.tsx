@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 import apiMock, { mockQuery } from '@/lib/axios-mock';
 import useLoadingToast from '@/hooks/toast/useLoadingToast';
 import useMutationToast from '@/hooks/toast/useMutationToast';
-import useQueryToast from '@/hooks/toast/useQueryWithToast';
+import useQueryToast from '@/hooks/toast/useQueryToast';
 
 import Button from '@/components/buttons/Button';
 import Seo from '@/components/Seo';
