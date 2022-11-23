@@ -35,13 +35,16 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
+  id                  String               @id @default(cuid())
+  name                String?
+  email               String?              @unique
+  emailVerified       DateTime?
+  image               String?
+  accounts            Account[]
+  sessions            Session[]
+  transactions        Transaction[]
+  transactionAccounts TransactionAccount[]
+  categories          Category[]
 }
 
 model VerificationToken {
@@ -50,4 +53,58 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Transaction {
+  id          String             @id @default(cuid())
+  type        TransactionType
+  date        DateTime
+  amount      Int
+  note        String
+  description String             @db.Text
+  account     TransactionAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  accountId   String
+  category    Category           @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId  String
+  user        User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+  TRANSFER
+}
+
+model TransactionAccount {
+  id           String        @id @default(cuid())
+  name         String
+  type         AccountType
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       String
+  transactions Transaction[]
+}
+
+enum AccountType {
+  CASH
+  BANK
+  SAVINGS
+  E_WALLET
+  OTHER
+}
+
+model Category {
+  id           String        @id @default(cuid())
+  name         String
+  type         CategoryType
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       String
+  transactions Transaction[]
+}
+
+enum CategoryType {
+  INCOME
+  EXPENSE
 }
