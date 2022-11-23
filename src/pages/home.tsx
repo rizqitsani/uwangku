@@ -7,10 +7,12 @@ import { formatRupiah } from '@/lib/currency';
 import { transactions } from '@/lib/mocks/data/transaction';
 
 import IconButton from '@/components/buttons/IconButton';
+import withAuth from '@/components/hoc/withAuth';
 import Layout from '@/components/layout/Layout';
 import Seo from '@/components/Seo';
 
-export default function HomePage() {
+export default withAuth(HomePage);
+function HomePage() {
   const router = useRouter();
 
   const handleLogout = () => {
