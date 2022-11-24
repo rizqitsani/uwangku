@@ -1,6 +1,8 @@
-import { UseQueryResult } from '@tanstack/react-query';
+import { UseTRPCQueryResult } from '@trpc/react-query/shared';
 import * as React from 'react';
 import toast from 'react-hot-toast';
+
+import { isTRPCClientError } from '@/lib/trpc';
 
 import { DEFAULT_TOAST_MESSAGE } from '@/constant/toast';
 
@@ -11,10 +13,10 @@ type OptionType = {
 };
 
 export default function useQueryToast<T, E>(
-  query: UseQueryResult<T, E>,
+  query: UseTRPCQueryResult<T, E>,
   customMessages: OptionType = {}
 ) {
-  const { data, isError, isLoading } = query;
+  const { data, error, isError, isLoading } = query;
 
   const toastStatus = React.useRef<string>(data ? 'done' : 'idle');
   const toastMessage = {
@@ -26,7 +28,9 @@ export default function useQueryToast<T, E>(
     // If it is not the first render
     if (toastStatus.current === 'done' && !isLoading) return;
 
-    if (isError) {
+    if (isError && isTRPCClientError(error)) {
+      toast.error(error.shape?.message || toastMessage.error);
+    } else if (isError) {
       toast.error(toastMessage.error, { id: toastStatus.current });
       toastStatus.current = 'done';
     } else if (isLoading) {
@@ -41,6 +45,7 @@ export default function useQueryToast<T, E>(
     };
   }, [
     data,
+    error,
     isError,
     isLoading,
     toastMessage.error,

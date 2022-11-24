@@ -1,11 +1,10 @@
-import { UseMutationResult } from '@tanstack/react-query';
-import { AxiosError } from 'axios';
+import { UseTRPCMutationResult } from '@trpc/react-query/shared';
 import * as React from 'react';
 import toast from 'react-hot-toast';
 
-import { DEFAULT_TOAST_MESSAGE } from '@/constant/toast';
+import { isTRPCClientError } from '@/lib/trpc';
 
-import { ApiError } from '@/types/api';
+import { DEFAULT_TOAST_MESSAGE } from '@/constant/toast';
 
 type OptionType = {
   loading?: string;
@@ -13,8 +12,8 @@ type OptionType = {
   error?: string;
 };
 
-export default function useMutationToast<T, K>(
-  mutation: UseMutationResult<T, AxiosError<ApiError>, K>,
+export default function useMutationToast<T, E, V, C>(
+  mutation: UseTRPCMutationResult<T, E, V, C>,
   customMessages: OptionType = {}
 ) {
   const { data, isError, isLoading, error } = mutation;
@@ -29,8 +28,10 @@ export default function useMutationToast<T, K>(
     // If it is not the first render
     if (toastStatus.current === 'done' && !isLoading) return;
 
-    if (isError) {
-      toast.error(error?.response?.data?.message || toastMessage.error, {
+    if (isError && isTRPCClientError(error)) {
+      toast.error(error.shape?.message || toastMessage.error);
+    } else if (isError) {
+      toast.error(toastMessage.error, {
         id: toastStatus.current,
       });
       toastStatus.current = 'done';
