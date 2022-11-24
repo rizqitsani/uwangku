@@ -1,17 +1,8 @@
-import { z } from 'zod';
-
-import { procedure, router } from '@/server/trpc';
+import { mockRouter } from '@/server/routers/mock';
+import { router } from '@/server/trpc';
 
 export const appRouter = router({
-  hello: procedure
-    .input(
-      z.object({
-        text: z.string(),
-      })
-    )
-    .query(({ input }) => {
-      return `Hello ${input.text}`;
-    }),
+  mock: mockRouter,
 });
 
 export type AppRouter = typeof appRouter;
