@@ -76,7 +76,7 @@ export const accountRouter = router({
     } catch {
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
-        message: 'Gagal membuat rekening',
+        message: 'Gagal mengambil data rekening',
       });
     }
   }),

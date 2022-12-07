@@ -1,4 +1,4 @@
-import { AccountType } from '@prisma/client';
+import { AccountType, TransactionAccount } from '@prisma/client';
 import * as React from 'react';
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 import { HiArrowLeft } from 'react-icons/hi';
@@ -6,7 +6,6 @@ import { BottomSheet } from 'react-spring-bottom-sheet';
 
 import clsxm from '@/lib/clsxm';
 import { formatRupiah } from '@/lib/currency';
-import { accountStyle } from '@/lib/mocks/data/account';
 import { trpc } from '@/lib/trpc';
 import useMutationToast from '@/hooks/toast/useMutationToast';
 import useQueryToast from '@/hooks/toast/useQueryToast';
@@ -22,6 +21,19 @@ import Seo from '@/components/Seo';
 type CreateAccountForm = {
   name: string;
   type: keyof typeof AccountType;
+};
+
+type AccountStyle = {
+  className: string;
+  name: string;
+};
+
+const accountStyle: Record<TransactionAccount['type'], AccountStyle> = {
+  BANK: { className: 'bg-green-100 text-green-800', name: 'Bank' },
+  E_WALLET: { className: 'bg-yellow-100 text-yellow-800', name: 'E-Wallet' },
+  CASH: { className: 'bg-indigo-100 text-indigo-800', name: 'Cash' },
+  SAVINGS: { className: 'bg-red-100 text-red-800', name: 'Tabungan' },
+  OTHER: { className: 'bg-slate-100 text-slate-800', name: 'Lainnya' },
 };
 
 export default withAuth(AccountsPage);
@@ -87,6 +99,11 @@ function AccountsPage() {
               <h1 className='h3'>Rekening Anda</h1>
             </div>
             <div className='mt-6 flex-1 space-y-3'>
+              {accounts.length === 0 && (
+                <p className='text-gray-500'>
+                  Belum ada rekening yang ditambahkan
+                </p>
+              )}
               {accounts.map((account) => (
                 <div
                   key={account.id}
@@ -149,7 +166,7 @@ function AccountsPage() {
                 </SelectInput>
               </div>
               <Button type='submit' className='mt-6 w-full rounded-lg'>
-                Simpan Transaksi
+                Simpan Rekening
               </Button>
             </form>
           </FormProvider>
