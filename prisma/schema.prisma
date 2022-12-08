@@ -61,7 +61,7 @@ model Transaction {
   date        DateTime
   amount      Int
   note        String
-  description String             @db.Text
+  description String?            @db.Text
   account     TransactionAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
   accountId   String
   category    Category           @relation(fields: [categoryId], references: [id], onDelete: Cascade)
