@@ -1,23 +1,25 @@
+import { TransactionType } from '@prisma/client';
+import { useRouter } from 'next/router';
 import * as React from 'react';
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 import { HiArrowLeft } from 'react-icons/hi';
 
-import logger from '@/lib/logger';
-import { accounts } from '@/lib/mocks/data/account';
-import { expenseCategories, incomeCategories } from '@/lib/mocks/data/category';
+import { trpc } from '@/lib/trpc';
+import useMutationToast from '@/hooks/toast/useMutationToast';
 
 import Button from '@/components/buttons/Button';
 import DatePicker from '@/components/forms/DatePicker';
 import Input from '@/components/forms/Input';
 import SelectInput from '@/components/forms/SelectInput';
 import TextArea from '@/components/forms/TextArea';
+import withAuth from '@/components/hoc/withAuth';
 import Layout from '@/components/layout/Layout';
 import IconLink from '@/components/links/IconLink';
 import Seo from '@/components/Seo';
 
 type CreateTransactionForm = {
   date: Date;
-  type: string;
+  type: keyof typeof TransactionType;
   account: string;
   category: string;
   amount: number;
@@ -25,7 +27,10 @@ type CreateTransactionForm = {
   description: string;
 };
 
-export default function TransactionsPage() {
+export default withAuth(TransactionsPage);
+function TransactionsPage() {
+  const router = useRouter();
+
   //#region  //*=========== Form ===========
   const methods = useForm<CreateTransactionForm>({
     mode: 'onTouched',
@@ -33,16 +38,36 @@ export default function TransactionsPage() {
   const { handleSubmit, watch } = methods;
   //#endregion  //*======== Form ===========
 
+  //#region  //*=========== Get Initial Data ===========
+  const { data: _accountData } = trpc.account.list.useQuery();
+  const accounts = _accountData?.data.accounts || [];
+
+  const { data: _categoryData } = trpc.category.list.useQuery();
+  const incomeCategories = _categoryData?.data.incomeCategories || [];
+  const expenseCategories = _categoryData?.data.expenseCategories || [];
+
+  //#endregion  //*======== Get Initial Data ===========
+
   //#region  //*=========== Category ===========
-  const transactionType = watch('type');
+  const transactionType = watch('type') as TransactionType;
   const categories =
-    transactionType === 'income' ? incomeCategories : expenseCategories;
+    transactionType === 'INCOME' ? incomeCategories : expenseCategories;
   //#endregion  //*======== Category ===========
 
   //#region  //*=========== Form Submit ===========
+  const { mutate } = useMutationToast(
+    trpc.transaction.create.useMutation({
+      onSuccess: () => {
+        router.push('/transactions');
+      },
+    }),
+    {
+      success: 'Transaksi berhasil dibuat',
+    }
+  );
+
   const onSubmit: SubmitHandler<CreateTransactionForm> = (data) => {
-    logger({ data }, 'rhf.tsx line 33');
-    return;
+    mutate({ ...data, date: new Date(data.date).toISOString() });
   };
   //#endregion  //*======== Form Submit ===========
 
@@ -76,8 +101,8 @@ export default function TransactionsPage() {
                       required: 'Jenis transaksi harus dipilih',
                     }}
                   >
-                    <option value='expense'>Pengeluaran</option>
-                    <option value='income'>Pemasukan</option>
+                    <option value='INCOME'>Pemasukan</option>
+                    <option value='EXPENSE'>Pengeluaran</option>
                   </SelectInput>
                   <DatePicker
                     id='date'
@@ -104,31 +129,36 @@ export default function TransactionsPage() {
                       </option>
                     ))}
                   </SelectInput>
-                  <SelectInput
-                    id='category'
-                    label='Kategori'
-                    placeholder='Pilih kategori'
-                    validation={{
-                      required: 'Kategori harus dipilih',
-                    }}
-                  >
-                    {categories.map((category, index) => (
-                      <option key={`${category}-${index}`} value={category}>
-                        {category}
-                      </option>
-                    ))}
-                  </SelectInput>
+                  {transactionType !== 'TRANSFER' && (
+                    <SelectInput
+                      id='category'
+                      label='Kategori'
+                      placeholder='Pilih kategori'
+                      validation={{
+                        required: 'Kategori harus dipilih',
+                      }}
+                    >
+                      {categories.map((category) => (
+                        <option key={category.id} value={category.id}>
+                          {category.name}
+                        </option>
+                      ))}
+                    </SelectInput>
+                  )}
                   <Input
                     id='amount'
                     label='Jumlah'
                     validation={{
                       required: 'Jumlah harus diisi',
+                      valueAsNumber: true,
+                      validate: (value) =>
+                        /^[0-9]+$/.test(value) || 'Jumlah harus berupa angka',
                     }}
                   />
                   <Input
                     id='description'
                     label='Deskripsi'
-                    validation={{ required: 'Deskripsi must be filled' }}
+                    validation={{ required: 'Deskripsi harus diisi' }}
                   />
                   <TextArea id='note' label='Catatan (Opsional)' />
                 </div>

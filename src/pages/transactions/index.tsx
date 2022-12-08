@@ -1,3 +1,5 @@
+import { Category, Transaction } from '@prisma/client';
+import { parseISO } from 'date-fns';
 import * as React from 'react';
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 import { HiPlus } from 'react-icons/hi';
@@ -5,30 +7,57 @@ import { IoWallet } from 'react-icons/io5';
 
 import clsxm from '@/lib/clsxm';
 import { formatRupiah } from '@/lib/currency';
+import { formatLocale } from '@/lib/date';
 import logger from '@/lib/logger';
-import { transactions } from '@/lib/mocks/data/transaction';
+import { trpc } from '@/lib/trpc';
+import useQueryToast from '@/hooks/toast/useQueryToast';
 
 import DatePicker from '@/components/forms/DatePicker';
+import withAuth from '@/components/hoc/withAuth';
 import Layout from '@/components/layout/Layout';
 import IconLink from '@/components/links/IconLink';
 import Seo from '@/components/Seo';
 
+type TransactionRecap = Transaction & {
+  category: Category;
+};
+
 type GroupedTransaction = {
-  date: string;
-  transactions: typeof transactions;
+  date: Date;
+  transactions: TransactionRecap[];
 }[];
 
 type MonthForm = {
   date: Date;
 };
 
-export default function TransactionsPage() {
+export default withAuth(TransactionsPage);
+function TransactionsPage() {
   //#region  //*=========== Form ===========
   const methods = useForm<MonthForm>({
     mode: 'onTouched',
+    defaultValues: {
+      date: new Date(),
+    },
   });
-  const { handleSubmit } = methods;
+  const { handleSubmit, watch } = methods;
   //#endregion  //*======== Form ===========
+
+  //#region  //*=========== Get Initial Data ===========
+  const date = watch('date');
+
+  const { data: queryData } = useQueryToast(
+    trpc.transaction.getByMonth.useQuery(
+      {
+        currentDate: date.toISOString(),
+      },
+      {
+        enabled: !!date,
+      }
+    )
+  );
+  const transactions = queryData?.data.transactions || [];
+  //#endregion  //*======== Get Initial Data ===========
 
   //#region  //*=========== Form Submit ===========
   const onSubmit: SubmitHandler<MonthForm> = (data) => {
@@ -38,16 +67,24 @@ export default function TransactionsPage() {
   //#endregion  //*======== Form Submit ===========
 
   const groupedTransactionList = transactions.reduce((acc, curr) => {
-    const isGroupExist = acc.find((transactionGroup) => {
-      return transactionGroup.date === curr.date;
-    });
+    const parsedTransaction = {
+      ...curr,
+      date: parseISO(curr.date),
+      createdAt: parseISO(curr.createdAt),
+      updatedAt: parseISO(curr.updatedAt),
+    };
+
+    const isGroupExist = acc.find(
+      (transactionGroup) =>
+        transactionGroup.date.getDate() === parsedTransaction.date.getDate()
+    );
 
     if (isGroupExist) {
-      isGroupExist.transactions.push(curr);
+      isGroupExist.transactions.push(parsedTransaction);
     } else {
       acc.push({
-        date: curr.date,
-        transactions: [curr],
+        date: parsedTransaction.date,
+        transactions: [parsedTransaction],
       });
     }
 
@@ -78,7 +115,6 @@ export default function TransactionsPage() {
                     id='date'
                     label={null}
                     dateFormat='MMMM yyyy'
-                    defaultValue={new Date().toString()}
                     placeholder='dd/mm/yyyy'
                     showMonthYearPicker
                   />
@@ -88,9 +124,9 @@ export default function TransactionsPage() {
 
             <div className='mt-4 divide-y divide-gray-100'>
               {groupedTransactionList.map((groupedTransaction) => (
-                <div key={groupedTransaction.date}>
+                <div key={formatLocale(groupedTransaction.date, 'FULL')}>
                   <h2 className='py-2 text-sm font-normal'>
-                    {groupedTransaction.date}
+                    {formatLocale(groupedTransaction.date, 'FULL')}
                   </h2>
                   {groupedTransaction.transactions.map((transaction) => (
                     <div
@@ -101,7 +137,7 @@ export default function TransactionsPage() {
                         <span className='flex flex-1 space-x-2 truncate'>
                           <span
                             className={clsxm(
-                              transaction.type === 'income'
+                              transaction.type === 'INCOME'
                                 ? 'bg-green-100'
                                 : 'bg-red-100',
                               'mt-[2px] flex h-4 w-4 items-center justify-center rounded-full'
@@ -110,7 +146,7 @@ export default function TransactionsPage() {
                           >
                             <span
                               className={clsxm(
-                                transaction.type === 'income'
+                                transaction.type === 'INCOME'
                                   ? 'bg-green-400'
                                   : 'bg-red-400',
                                 'h-2 w-2 rounded-full'
@@ -119,10 +155,10 @@ export default function TransactionsPage() {
                           </span>
                           <span className='flex flex-col truncate'>
                             <span className='text-sm font-medium'>
-                              {transaction.name}
+                              {transaction.description}
                             </span>
                             <span className='text-xs font-medium text-gray-500'>
-                              {transaction.category}
+                              {transaction.category.name}
                             </span>
                           </span>
                         </span>
